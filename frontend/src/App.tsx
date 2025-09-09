@@ -8,6 +8,7 @@ import QuestionScreen from './components/QuestionScreen';
 import ResultScreen from './components/ResultScreen';
 import ProgressBar from './components/ProgressBar';
 import EeveeEvolutionPage from './components/EeveeEvolutionPage';
+import ErrorBoundary from './ErrorBoundary';
 import './App.css';
 
 const GlobalStyle = createGlobalStyle`
@@ -125,6 +126,8 @@ export interface TestResult {
 type Screen = 'welcome' | 'quiz' | 'result';
 
 const PersonalityTestApp: React.FC = () => {
+  console.log('PersonalityTestApp component rendering');
+  
   const [currentScreen, setCurrentScreen] = useState<Screen>('welcome');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -132,6 +135,8 @@ const PersonalityTestApp: React.FC = () => {
   const [result, setResult] = useState<TestResult | null>(null);
   const [pokemonData, setPokemonData] = useState<PokemonData | null>(null);
   const [loading, setLoading] = useState(false);
+  
+  console.log('Current state:', { currentScreen, questionsCount: questions.length, result: !!result, pokemonData: !!pokemonData });
 
   // Fallback questions in case API fails
   const fallbackQuestions: Question[] = [
@@ -541,14 +546,26 @@ const PersonalityTestApp: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  console.log('App component rendering');
+  
   return (
-    <Router>
-      <GlobalStyle />
-      <Routes>
-        <Route path="/" element={<PersonalityTestApp />} />
-        <Route path="/evolution/:evolutionName" element={<EeveeEvolutionPage />} />
-      </Routes>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <GlobalStyle />
+        <Routes>
+          <Route path="/" element={
+            <ErrorBoundary>
+              <PersonalityTestApp />
+            </ErrorBoundary>
+          } />
+          <Route path="/evolution/:evolutionName" element={
+            <ErrorBoundary>
+              <EeveeEvolutionPage />
+            </ErrorBoundary>
+          } />
+        </Routes>
+      </Router>
+    </ErrorBoundary>
   );
 };
 
