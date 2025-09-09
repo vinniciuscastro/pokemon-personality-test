@@ -1,0 +1,1 @@
+{"name":"pokemon-personality-test","version":"1.0.0","description":"Pokemon-themed personality test","scripts":{"build":"cd frontend && npm ci && npm run build","dev":"cd frontend && npm start"},"keywords":["pokemon","personality","test","react","flask"],"author":"Your Name","license":"MIT"}
