@@ -133,6 +133,40 @@ const PersonalityTestApp: React.FC = () => {
   const [pokemonData, setPokemonData] = useState<PokemonData | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Fallback questions in case API fails
+  const fallbackQuestions: Question[] = [
+    {
+      id: 1,
+      question: "What's your ideal way to spend a weekend?",
+      options: {
+        "A": {"text": "Reading a good book or learning something new", "pokemon": "bulbasaur", "weight": 3},
+        "B": {"text": "Going on an adventure or trying extreme sports", "pokemon": "charmander", "weight": 3},
+        "C": {"text": "Spending quality time with friends and family", "pokemon": "squirtle", "weight": 3},
+        "D": {"text": "Exploring new places or trying new experiences", "pokemon": "eevee", "weight": 3}
+      }
+    },
+    {
+      id: 2,
+      question: "How do you approach challenges?",
+      options: {
+        "A": {"text": "Think it through carefully and plan methodically", "pokemon": "bulbasaur", "weight": 3},
+        "B": {"text": "Face it head-on with determination and energy", "pokemon": "charmander", "weight": 3},
+        "C": {"text": "Work with others and seek support when needed", "pokemon": "squirtle", "weight": 3},
+        "D": {"text": "Adapt and find creative solutions", "pokemon": "eevee", "weight": 3}
+      }
+    },
+    {
+      id: 3,
+      question: "What motivates you most?",
+      options: {
+        "A": {"text": "Knowledge and understanding", "pokemon": "bulbasaur", "weight": 3},
+        "B": {"text": "Achievement and recognition", "pokemon": "charmander", "weight": 3},
+        "C": {"text": "Helping others and building relationships", "pokemon": "squirtle", "weight": 3},
+        "D": {"text": "Freedom and new possibilities", "pokemon": "eevee", "weight": 3}
+      }
+    }
+  ];
+
   // Fetch questions on component mount
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -140,7 +174,9 @@ const PersonalityTestApp: React.FC = () => {
         const response = await axios.get('/api/questions');
         setQuestions(response.data);
       } catch (error) {
-        console.error('Error fetching questions:', error);
+        console.error('Error fetching questions, using fallback:', error);
+        // Use fallback questions if API fails
+        setQuestions(fallbackQuestions);
       }
     };
     
@@ -179,7 +215,73 @@ const PersonalityTestApp: React.FC = () => {
       
       setCurrentScreen('result');
     } catch (error) {
-      console.error('Error calculating result:', error);
+      console.error('Error calculating result, using fallback:', error);
+      
+      // Fallback calculation if API fails
+      const scores = {
+        'bulbasaur': 0,
+        'charmander': 0,
+        'squirtle': 0,
+        'eevee': 0
+      };
+      
+      // Count votes for each Pokemon based on answers
+      Object.values(answers).forEach(answer => {
+        if (answer.toUpperCase() === 'A') scores['bulbasaur']++;
+        else if (answer.toUpperCase() === 'B') scores['charmander']++;
+        else if (answer.toUpperCase() === 'C') scores['squirtle']++;
+        else if (answer.toUpperCase() === 'D') scores['eevee']++;
+      });
+      
+      const resultPokemon = Object.keys(scores).reduce((a, b) => scores[a as keyof typeof scores] > scores[b as keyof typeof scores] ? a : b);
+      const total = Object.values(answers).length;
+      const percentages = Object.fromEntries(
+        Object.entries(scores).map(([pokemon, score]) => [pokemon, (score / total) * 100])
+      );
+      
+      setResult({
+        result_pokemon: resultPokemon,
+        scores,
+        percentages,
+        personality_data: null
+      });
+      
+      // Create fallback Pokemon data
+      const fallbackPokemonData = {
+        id: resultPokemon === 'bulbasaur' ? 1 : resultPokemon === 'charmander' ? 4 : resultPokemon === 'squirtle' ? 7 : 133,
+        name: resultPokemon.charAt(0).toUpperCase() + resultPokemon.slice(1),
+        sprites: {
+          front_default: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${resultPokemon === 'bulbasaur' ? 1 : resultPokemon === 'charmander' ? 4 : resultPokemon === 'squirtle' ? 7 : 133}.png`,
+          official_artwork: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${resultPokemon === 'bulbasaur' ? 1 : resultPokemon === 'charmander' ? 4 : resultPokemon === 'squirtle' ? 7 : 133}.png`
+        },
+        types: [resultPokemon === 'bulbasaur' ? 'grass' : resultPokemon === 'charmander' ? 'fire' : resultPokemon === 'squirtle' ? 'water' : 'normal'],
+        personality: {
+          type: `The ${resultPokemon.charAt(0).toUpperCase() + resultPokemon.slice(1)} Personality`,
+          traits: ['Unique', 'Special', 'Amazing', 'Wonderful'],
+          color_palette: {
+            primary: resultPokemon === 'bulbasaur' ? '#78C850' : resultPokemon === 'charmander' ? '#F08030' : resultPokemon === 'squirtle' ? '#6890F0' : '#A8A878',
+            secondary: '#FFFFFF',
+            accent: '#000000'
+          },
+          evolution_chain: [
+            { name: resultPokemon.charAt(0).toUpperCase() + resultPokemon.slice(1), level: 'Base Form', id: 1 }
+          ],
+          type_interactions: {
+            strengths_against: ['Various'],
+            weaknesses_against: ['Various'],
+            relationships: {}
+          },
+          growth_advice: {
+            strengths: `You have the wonderful qualities of ${resultPokemon}!`,
+            growth_tips: ['Continue being amazing!', 'Embrace your unique qualities!'],
+            potential_blocks: ['None - you\'re perfect as you are!'],
+            evolution_path: `Your path as ${resultPokemon} is one of continuous growth and discovery.`
+          }
+        }
+      };
+      
+      setPokemonData(fallbackPokemonData);
+      setCurrentScreen('result');
     } finally {
       setLoading(false);
     }
@@ -221,7 +323,7 @@ const PersonalityTestApp: React.FC = () => {
             </motion.div>
           )}
 
-          {currentScreen === 'quiz' && questions.length > 0 && (
+          {currentScreen === 'quiz' && (
             <motion.div
               key={`question-${currentQuestionIndex}`}
               initial={{ opacity: 0, x: 50 }}
@@ -229,12 +331,26 @@ const PersonalityTestApp: React.FC = () => {
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.3 }}
             >
-              <QuestionScreen
-                question={questions[currentQuestionIndex]}
-                onAnswer={handleAnswer}
-                questionNumber={currentQuestionIndex + 1}
-                totalQuestions={questions.length}
-              />
+              {questions.length > 0 && currentQuestionIndex < questions.length ? (
+                <QuestionScreen
+                  question={questions[currentQuestionIndex]}
+                  onAnswer={handleAnswer}
+                  questionNumber={currentQuestionIndex + 1}
+                  totalQuestions={questions.length}
+                />
+              ) : (
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  minHeight: '50vh', 
+                  color: 'white',
+                  fontSize: '1.2rem',
+                  textAlign: 'center'
+                }}>
+                  Loading questions...
+                </div>
+              )}
             </motion.div>
           )}
 
