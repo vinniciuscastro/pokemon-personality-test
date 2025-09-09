@@ -321,9 +321,28 @@ const pokemonNames = {
 };
 
 const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRestart }) => {
+  console.log('ResultScreen rendering with:', { result, pokemonData });
+  
   const [activeTab, setActiveTab] = useState<Tab>('scores');
   const navigate = useNavigate();
-  const themeColor = pokemonColors[result.result_pokemon as keyof typeof pokemonColors];
+  const themeColor = pokemonColors[result.result_pokemon as keyof typeof pokemonColors] || '#DC143C';
+  
+  if (!result || !pokemonData) {
+    console.error('ResultScreen: Missing required data', { result, pokemonData });
+    return (
+      <div style={{ 
+        color: 'white', 
+        textAlign: 'center', 
+        padding: '2rem',
+        minHeight: '50vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        Error: Missing result or Pokemon data
+      </div>
+    );
+  }
   
   const handleEvolutionClick = (evolutionName: string, pokemonName: string) => {
     // Only navigate for Eevee evolutions
@@ -373,7 +392,7 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
               💪 Your Core Strengths
             </AdviceTitle>
             <AdviceText>
-              {pokemonData.personality.growth_advice.strengths}
+              {pokemonData?.personality?.growth_advice?.strengths || 'Strengths data not available.'}
             </AdviceText>
           </AdviceSection>
         );
@@ -385,7 +404,7 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
               🌱 Areas for Growth
             </AdviceTitle>
             <AdviceList>
-              {pokemonData.personality.growth_advice.growth_tips.map((tip, index) => (
+              {(pokemonData?.personality?.growth_advice?.growth_tips || []).map((tip, index) => (
                 <AdviceItem
                   key={index}
                   themeColor={themeColor}
@@ -407,7 +426,7 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
               🚧 Watch Out For These
             </AdviceTitle>
             <AdviceList>
-              {pokemonData.personality.growth_advice.potential_blocks.map((block, index) => (
+              {(pokemonData?.personality?.growth_advice?.potential_blocks || []).map((block, index) => (
                 <AdviceItem
                   key={index}
                   themeColor={themeColor}
@@ -429,22 +448,22 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
               🔥💧 Type Relationships & Interactions
             </AdviceTitle>
             <AdviceText style={{ fontWeight: 600, marginBottom: '1rem' }}>
-              Your type: {pokemonData.personality.type}
+              Your type: {pokemonData?.personality?.type || 'Unknown'}
             </AdviceText>
             <div style={{ marginBottom: '1.5rem' }}>
               <h4 style={{ color: themeColor, marginBottom: '0.5rem' }}>💪 Strong Against:</h4>
               <p style={{ marginBottom: '1rem' }}>
-                {pokemonData.personality.type_interactions.strengths_against.join(', ')}
+                {pokemonData?.personality?.type_interactions?.strengths_against?.join(', ') || 'None specified'}
               </p>
             </div>
             <div style={{ marginBottom: '1.5rem' }}>
               <h4 style={{ color: themeColor, marginBottom: '0.5rem' }}>⚠️ Weak Against:</h4>
               <p style={{ marginBottom: '1rem' }}>
-                {pokemonData.personality.type_interactions.weaknesses_against.join(', ')}
+                {pokemonData?.personality?.type_interactions?.weaknesses_against?.join(', ') || 'None specified'}
               </p>
             </div>
             <AdviceList>
-              {Object.entries(pokemonData.personality.type_interactions.relationships).map(([type, advice], index) => (
+              {Object.entries(pokemonData?.personality?.type_interactions?.relationships || {}).map(([type, advice], index) => (
                 <AdviceItem
                   key={type}
                   themeColor={themeColor}
@@ -466,7 +485,7 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
               🦋 Your Complete Evolution Journey
             </AdviceTitle>
             <AdviceText>
-              {pokemonData.personality.growth_advice.evolution_path}
+              {pokemonData?.personality?.growth_advice?.evolution_path || 'Evolution path not available.'}
             </AdviceText>
           </AdviceSection>
         );
@@ -486,14 +505,14 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
       >
         <PokemonHeader>
           <PokemonImage
-            src={pokemonData.sprites.official_artwork}
-            alt={pokemonData.name}
+            src={pokemonData?.sprites?.official_artwork || pokemonData?.sprites?.front_default || ''}
+            alt={pokemonData?.name || 'Pokemon'}
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ duration: 0.8, type: 'spring', stiffness: 120 }}
           />
           <PokemonName themeColor={themeColor}>
-            You are {pokemonData.name}!
+            You are {pokemonData?.name || 'Unknown Pokemon'}!
           </PokemonName>
           <PokemonSubtitle>
             Your personality Pokemon has been revealed
@@ -501,7 +520,7 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
         </PokemonHeader>
 
         <TraitsList>
-          {pokemonData.personality.traits.map((trait, index) => (
+          {(pokemonData?.personality?.traits || []).map((trait, index) => (
             <Trait
               key={trait}
               themeColor={themeColor}
@@ -525,7 +544,7 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
             🦋 Your Evolution Journey
           </EvolutionTitle>
           <EvolutionChain>
-            {pokemonData.personality.evolution_chain.map((evolution, index) => (
+            {(pokemonData?.personality?.evolution_chain || []).map((evolution, index) => (
               <React.Fragment key={evolution.id}>
                 <EvolutionStage
                   isActive={index === 0}
@@ -564,7 +583,7 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
             ))}
           </EvolutionChain>
           <AdviceText style={{ marginBottom: 0 }}>
-            {pokemonData.personality.growth_advice.evolution_path}
+            {pokemonData?.personality?.growth_advice?.evolution_path || 'Your journey of growth and discovery continues.'}
           </AdviceText>
         </EvolutionHighlight>
 
