@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
-import WelcomeScreen from './components/WelcomeScreen';
+import WelcomeScreen from './components/SimpleWelcomeScreen';
 import QuestionScreen from './components/QuestionScreen';
 import ResultScreen from './components/ResultScreen';
 import ProgressBar from './components/ProgressBar';
-import EeveeEvolutionPage from './components/EeveeEvolutionPage';
 import ErrorBoundary from './ErrorBoundary';
 import './App.css';
 
@@ -550,21 +548,8 @@ const App: React.FC = () => {
   
   return (
     <ErrorBoundary>
-      <Router>
-        <GlobalStyle />
-        <Routes>
-          <Route path="/" element={
-            <ErrorBoundary>
-              <PersonalityTestApp />
-            </ErrorBoundary>
-          } />
-          <Route path="/evolution/:evolutionName" element={
-            <ErrorBoundary>
-              <EeveeEvolutionPage />
-            </ErrorBoundary>
-          } />
-        </Routes>
-      </Router>
+      <GlobalStyle />
+      <PersonalityTestApp />
     </ErrorBoundary>
   );
 };
