@@ -246,7 +246,7 @@ const PersonalityTestApp: React.FC = () => {
         personality_data: null
       });
       
-      // Create fallback Pokemon data
+      // Create fallback Pokemon data with complete structure
       const fallbackPokemonData = {
         id: resultPokemon === 'bulbasaur' ? 1 : resultPokemon === 'charmander' ? 4 : resultPokemon === 'squirtle' ? 7 : 133,
         name: resultPokemon.charAt(0).toUpperCase() + resultPokemon.slice(1),
@@ -255,32 +255,149 @@ const PersonalityTestApp: React.FC = () => {
           official_artwork: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${resultPokemon === 'bulbasaur' ? 1 : resultPokemon === 'charmander' ? 4 : resultPokemon === 'squirtle' ? 7 : 133}.png`
         },
         types: [resultPokemon === 'bulbasaur' ? 'grass' : resultPokemon === 'charmander' ? 'fire' : resultPokemon === 'squirtle' ? 'water' : 'normal'],
-        personality: {
-          type: `The ${resultPokemon.charAt(0).toUpperCase() + resultPokemon.slice(1)} Personality`,
-          traits: ['Unique', 'Special', 'Amazing', 'Wonderful'],
-          color_palette: {
-            primary: resultPokemon === 'bulbasaur' ? '#78C850' : resultPokemon === 'charmander' ? '#F08030' : resultPokemon === 'squirtle' ? '#6890F0' : '#A8A878',
-            secondary: '#FFFFFF',
-            accent: '#000000'
-          },
-          evolution_chain: [
-            { name: resultPokemon.charAt(0).toUpperCase() + resultPokemon.slice(1), level: 'Base Form', id: 1 }
-          ],
-          type_interactions: {
-            strengths_against: ['Various'],
-            weaknesses_against: ['Various'],
-            relationships: {}
-          },
-          growth_advice: {
-            strengths: `You have the wonderful qualities of ${resultPokemon}!`,
-            growth_tips: ['Continue being amazing!', 'Embrace your unique qualities!'],
-            potential_blocks: ['None - you\'re perfect as you are!'],
-            evolution_path: `Your path as ${resultPokemon} is one of continuous growth and discovery.`
+        personality: (() => {
+          if (resultPokemon === 'bulbasaur') {
+            return {
+              type: 'The Thoughtful Strategist',
+              traits: ['Analytical', 'Patient', 'Wise', 'Methodical', 'Growth-Oriented'],
+              color_palette: { primary: '#78C850', secondary: '#A7DB8D', accent: '#68A040' },
+              evolution_chain: [
+                { name: 'Bulbasaur', level: 'Base Form', id: 1 },
+                { name: 'Ivysaur', level: 'Level 16', id: 2 },
+                { name: 'Venusaur', level: 'Level 32', id: 3 }
+              ],
+              type_interactions: {
+                strengths_against: ['Water', 'Ground', 'Rock'],
+                weaknesses_against: ['Fire', 'Psychic', 'Flying', 'Ice'],
+                relationships: {
+                  'fire_types': 'Learn to be more decisive - your thoughtful nature is valuable, but don\'t let analysis paralysis hold you back',
+                  'water_types': 'Your steady growth complements their emotional flow - great partnership potential'
+                }
+              },
+              growth_advice: {
+                strengths: 'You are the wise strategist who thinks before acting. Your methodical approach and love of learning make you excellent at long-term planning.',
+                growth_tips: [
+                  'Practice making faster decisions - your analysis is valuable but don\'t overthink every choice',
+                  'Share your knowledge more openly - others can benefit from your insights',
+                  'Set specific growth goals and track your progress regularly'
+                ],
+                potential_blocks: [
+                  'Analysis paralysis - overthinking decisions',
+                  'Reluctance to take risks or act without complete information',
+                  'Tendency to be too critical of yourself and others'
+                ],
+                evolution_path: 'Like Bulbasaur evolving into Venusaur, your growth comes from combining your natural wisdom with decisive action.'
+              }
+            };
+          } else if (resultPokemon === 'charmander') {
+            return {
+              type: 'The Passionate Achiever',
+              traits: ['Determined', 'Energetic', 'Competitive', 'Leadership-Oriented', 'Goal-Focused'],
+              color_palette: { primary: '#F08030', secondary: '#FFCC99', accent: '#E8620A' },
+              evolution_chain: [
+                { name: 'Charmander', level: 'Base Form', id: 4 },
+                { name: 'Charmeleon', level: 'Level 16', id: 5 },
+                { name: 'Charizard', level: 'Level 36', id: 6 }
+              ],
+              type_interactions: {
+                strengths_against: ['Grass', 'Ice', 'Bug', 'Steel'],
+                weaknesses_against: ['Water', 'Ground', 'Rock'],
+                relationships: {
+                  'water_types': 'Learn patience and emotional intelligence from them - balance your fire with their flow',
+                  'grass_types': 'Respect their thoughtful approach while sharing your motivational energy'
+                }
+              },
+              growth_advice: {
+                strengths: 'You are the natural leader with boundless energy and determination. Your competitive spirit inspires others.',
+                growth_tips: [
+                  'Practice patience - not every goal needs to be achieved immediately',
+                  'Learn to collaborate rather than always leading - others have valuable perspectives',
+                  'Develop emotional intelligence to better understand team dynamics'
+                ],
+                potential_blocks: [
+                  'Impatience with slower progress or people',
+                  'Tendency to take on too much and burn out',
+                  'Difficulty accepting failure or setbacks'
+                ],
+                evolution_path: 'Like Charmander\'s flame growing stronger through challenges, your evolution comes from learning to channel your intense energy wisely.'
+              }
+            };
+          } else if (resultPokemon === 'squirtle') {
+            return {
+              type: 'The Supportive Collaborator',
+              traits: ['Empathetic', 'Loyal', 'Team-Oriented', 'Adaptable', 'Nurturing'],
+              color_palette: { primary: '#6890F0', secondary: '#9DB7F5', accent: '#4F70C2' },
+              evolution_chain: [
+                { name: 'Squirtle', level: 'Base Form', id: 7 },
+                { name: 'Wartortle', level: 'Level 16', id: 8 },
+                { name: 'Blastoise', level: 'Level 36', id: 9 }
+              ],
+              type_interactions: {
+                strengths_against: ['Fire', 'Ground', 'Rock'],
+                weaknesses_against: ['Grass', 'Electric'],
+                relationships: {
+                  'fire_types': 'Your calming presence balances their intensity - help them develop patience',
+                  'grass_types': 'Great learning partnership - they provide structure while you provide emotional support'
+                }
+              },
+              growth_advice: {
+                strengths: 'You are the heart of any team, with natural ability to understand and support others. Your emotional intelligence creates harmony.',
+                growth_tips: [
+                  'Assert yourself more - your opinions and needs matter too',
+                  'Set boundaries to avoid taking on everyone else\'s problems',
+                  'Practice making decisions independently before seeking input'
+                ],
+                potential_blocks: [
+                  'Difficulty saying no to others\' requests',
+                  'Tendency to avoid conflict even when necessary',
+                  'May neglect own needs while caring for others'
+                ],
+                evolution_path: 'Like Squirtle\'s protective shell growing stronger, your evolution involves learning to protect your own energy while maintaining your caring nature.'
+              }
+            };
+          } else { // eevee
+            return {
+              type: 'The Adaptive Explorer',
+              traits: ['Versatile', 'Curious', 'Open-minded', 'Creative', 'Evolutionary'],
+              color_palette: { primary: '#A8A878', secondary: '#C6C6A7', accent: '#8A8A59' },
+              evolution_chain: [
+                { name: 'Eevee', level: 'Base Form', id: 133 },
+                { name: 'Vaporeon', level: 'Water Stone', id: 134 },
+                { name: 'Jolteon', level: 'Thunder Stone', id: 135 },
+                { name: 'Flareon', level: 'Fire Stone', id: 136 },
+                { name: 'Espeon', level: 'Friendship + Day', id: 196 },
+                { name: 'Umbreon', level: 'Friendship + Night', id: 197 },
+                { name: 'Leafeon', level: 'Leaf Stone', id: 470 },
+                { name: 'Glaceon', level: 'Ice Stone', id: 471 },
+                { name: 'Sylveon', level: 'Fairy Move + Friendship', id: 700 }
+              ],
+              type_interactions: {
+                strengths_against: ['None - but adaptable to all'],
+                weaknesses_against: ['Fighting'],
+                relationships: {
+                  'all_types': 'Your adaptability allows you to connect with anyone - use this to build bridges between different personality types'
+                }
+              },
+              growth_advice: {
+                strengths: 'You are the ultimate adapter with unlimited potential. Your curiosity and openness to change make you capable of growth in any direction.',
+                growth_tips: [
+                  'Focus your diverse interests - depth can be as valuable as breadth',
+                  'Commit to seeing projects through rather than jumping to the next interesting thing',
+                  'Use your adaptability to help others navigate change'
+                ],
+                potential_blocks: [
+                  'Difficulty committing to one path when so many options exist',
+                  'May struggle with routine or restrictive environments',
+                  'Can be seen as unreliable if constantly changing direction'
+                ],
+                evolution_path: 'Like Eevee\'s multiple evolution possibilities, your path is about conscious choice. You can become whatever you put your mind to.'
+              }
+            };
           }
-        }
+        })()
       };
       
-      setPokemonData(fallbackPokemonData);
+      setPokemonData(fallbackPokemonData as unknown as PokemonData);
       setCurrentScreen('result');
     } finally {
       setLoading(false);
@@ -354,7 +471,8 @@ const PersonalityTestApp: React.FC = () => {
             </motion.div>
           )}
 
-          {currentScreen === 'result' && result && pokemonData && (
+          {currentScreen === 'result' && (
+            result && pokemonData ? (
             <motion.div
               key="result"
               initial={{ opacity: 0, scale: 0.8 }}
@@ -363,11 +481,29 @@ const PersonalityTestApp: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <ResultScreen
-                result={result}
-                pokemonData={pokemonData}
+                result={result!}
+                pokemonData={pokemonData!}
                 onRestart={restartQuiz}
               />
             </motion.div>
+            ) : (
+              <motion.div
+                key="result-loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: '50vh',
+                  color: 'white',
+                  fontSize: '1.2rem',
+                  textAlign: 'center'
+                }}
+              >
+                Preparing your results...
+              </motion.div>
+            )
           )}
         </AnimatePresence>
 
