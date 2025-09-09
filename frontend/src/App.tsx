@@ -137,7 +137,7 @@ const PersonalityTestApp: React.FC = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/questions');
+        const response = await axios.get('/api/questions');
         setQuestions(response.data);
       } catch (error) {
         console.error('Error fetching questions:', error);
@@ -167,14 +167,14 @@ const PersonalityTestApp: React.FC = () => {
   const calculateResult = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/calculate-result', {
+      const response = await axios.post('/api/calculate-result', {
         answers
       });
       const testResult = response.data;
       setResult(testResult);
       
       // Fetch Pokemon data
-      const pokemonResponse = await axios.get(`http://localhost:5000/api/pokemon/${testResult.result_pokemon}`);
+      const pokemonResponse = await axios.get(`/api/pokemon/${testResult.result_pokemon}`);
       setPokemonData(pokemonResponse.data);
       
       setCurrentScreen('result');
