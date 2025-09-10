@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
-import WelcomeScreen from './components/WelcomeScreen';
+import WelcomeScreen from './components/SimpleWelcomeScreenWithImages';
 import QuestionScreen from './components/QuestionScreen';
 import ResultScreen from './components/ResultScreen';
 import ProgressBar from './components/ProgressBar';
