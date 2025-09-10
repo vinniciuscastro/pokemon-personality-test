@@ -126,6 +126,24 @@ type Screen = 'welcome' | 'quiz' | 'result';
 const PersonalityTestApp: React.FC = () => {
   console.log('PersonalityTestApp component rendering');
   
+  // Add error handling for the entire component
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      console.error('Global error caught:', event.error, event);
+    };
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled promise rejection:', event.reason, event);
+    };
+    
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, []);
+  
   const [currentScreen, setCurrentScreen] = useState<Screen>('welcome');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -417,9 +435,10 @@ const PersonalityTestApp: React.FC = () => {
 
   const progress = questions.length > 0 ? ((currentQuestionIndex + 1) / questions.length) * 100 : 0;
 
-  return (
-    <>
-      <AppContainer currentScreen={currentScreen} pokemonType={result?.result_pokemon}>
+  try {
+    return (
+      <>
+        <AppContainer currentScreen={currentScreen} pokemonType={result?.result_pokemon}>
         <BackgroundPattern />
         
         {currentScreen === 'quiz' && (
@@ -539,8 +558,12 @@ const PersonalityTestApp: React.FC = () => {
           </motion.div>
         )}
       </AppContainer>
-    </>
-  );
+      </>
+    );
+  } catch (error) {
+    console.error('Render error in PersonalityTestApp:', error);
+    throw error; // Re-throw to let ErrorBoundary handle it
+  }
 };
 
 const App: React.FC = () => {

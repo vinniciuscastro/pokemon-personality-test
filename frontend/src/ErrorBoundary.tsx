@@ -21,6 +21,10 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Component stack:', errorInfo.componentStack);
   }
 
   render() {
@@ -42,9 +46,10 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
           {this.state.error && (
             <details style={{ marginTop: '1rem', textAlign: 'left' }}>
               <summary>Error Details</summary>
-              <pre style={{ fontSize: '0.8rem', marginTop: '0.5rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                {this.state.error.toString()}
-                {this.state.error.stack && '\n\nStack trace:\n' + this.state.error.stack}
+              <pre style={{ fontSize: '0.8rem', marginTop: '0.5rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word', maxHeight: '300px', overflow: 'auto', backgroundColor: '#f0f0f0', padding: '1rem', borderRadius: '4px', color: '#333' }}>
+                {`Error Name: ${this.state.error.name || 'Unknown'}\n`}
+                {`Error Message: ${this.state.error.message || 'No message'}`}
+                {this.state.error.stack && `\n\nStack Trace:\n${this.state.error.stack}`}
               </pre>
             </details>
           )}
