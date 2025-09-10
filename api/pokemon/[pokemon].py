@@ -4,15 +4,21 @@ import requests
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
+        # Debug logging
+        print(f"Pokemon API called with path: {self.path}")
+        
         # Extract pokemon name from the URL
         path_parts = self.path.split('/')
+        print(f"Path parts: {path_parts}")
         pokemon_name = path_parts[-1] if len(path_parts) > 0 else ''
+        print(f"Raw pokemon name: '{pokemon_name}'")
         
         # Clean up the pokemon name (remove query parameters)
         if '?' in pokemon_name:
             pokemon_name = pokemon_name.split('?')[0]
         
         pokemon_name = pokemon_name.lower().strip()
+        print(f"Cleaned pokemon name: '{pokemon_name}'")
         
         # Pokemon data with personality information
         pokemon_data = {

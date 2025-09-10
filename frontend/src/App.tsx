@@ -223,23 +223,42 @@ const PersonalityTestApp: React.FC = () => {
 
   const calculateResult = async () => {
     setLoading(true);
+    console.log('=== QUIZ CALCULATION START ===');
+    console.log('Answers submitted:', answers);
+    
     try {
       const response = await axios.post('/api/calculate-result', {
         answers
       });
       const testResult = response.data;
+      console.log('Calculate result API response:', testResult);
+      console.log('Result Pokemon:', testResult.result_pokemon);
       setResult(testResult);
       
       // Fetch Pokemon data
+      const pokemonUrl = `/api/pokemon/${testResult.result_pokemon}`;
+      console.log('Fetching Pokemon data from:', pokemonUrl);
+      
       try {
-        const pokemonResponse = await axios.get(`/api/pokemon/${testResult.result_pokemon}`);
+        const pokemonResponse = await axios.get(pokemonUrl);
+        console.log('Pokemon API status:', pokemonResponse.status);
         console.log('Pokemon API response:', pokemonResponse.data);
+        
         if (pokemonResponse.data.error) {
+          console.error('Pokemon API returned error:', pokemonResponse.data.error);
           throw new Error(`Pokemon API error: ${pokemonResponse.data.error}`);
         }
+        
+        if (!pokemonResponse.data.name) {
+          console.error('Pokemon data missing name field:', pokemonResponse.data);
+          throw new Error('Pokemon data missing name field');
+        }
+        
         setPokemonData(pokemonResponse.data);
-      } catch (pokemonError) {
+        console.log('Pokemon data set successfully:', pokemonResponse.data.name);
+      } catch (pokemonError: any) {
         console.error('Error fetching Pokemon data:', pokemonError);
+        console.error('Pokemon error details:', pokemonError.response?.data);
         // Use fallback Pokemon data from the result calculation fallback logic below
         throw pokemonError;
       }
