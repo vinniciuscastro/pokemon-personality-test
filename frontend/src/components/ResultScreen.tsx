@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TestResult, PokemonData } from '../App';
@@ -324,7 +323,6 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
   console.log('ResultScreen rendering with:', { result, pokemonData });
   
   const [activeTab, setActiveTab] = useState<Tab>('scores');
-  const navigate = useNavigate();
   const themeColor = pokemonColors[result.result_pokemon as keyof typeof pokemonColors] || '#DC143C';
   
   if (!result || !pokemonData) {
@@ -345,9 +343,9 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
   }
   
   const handleEvolutionClick = (evolutionName: string, pokemonName: string) => {
-    // Only navigate for Eevee evolutions
+    // For now, just show an alert for Eevee evolutions
     if (result.result_pokemon === 'eevee' && evolutionName.toLowerCase() !== 'eevee') {
-      navigate(`/evolution/${evolutionName.toLowerCase()}`);
+      alert(`🌟 Evolution Discovered: ${evolutionName}! This ${pokemonName} represents one of your potential growth paths.`);
     }
   };
   
