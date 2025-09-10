@@ -184,7 +184,7 @@ const PersonalityTestApp: React.FC = () => {
     };
     
     fetchQuestions();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const startQuiz = () => {
     setCurrentScreen('quiz');
