@@ -42,8 +42,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
           {this.state.error && (
             <details style={{ marginTop: '1rem', textAlign: 'left' }}>
               <summary>Error Details</summary>
-              <pre style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>
+              <pre style={{ fontSize: '0.8rem', marginTop: '0.5rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                 {this.state.error.toString()}
+                {this.state.error.stack && '\n\nStack trace:\n' + this.state.error.stack}
               </pre>
             </details>
           )}
