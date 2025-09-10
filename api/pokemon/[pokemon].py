@@ -8,6 +8,12 @@ class handler(BaseHTTPRequestHandler):
         path_parts = self.path.split('/')
         pokemon_name = path_parts[-1] if len(path_parts) > 0 else ''
         
+        # Clean up the pokemon name (remove query parameters)
+        if '?' in pokemon_name:
+            pokemon_name = pokemon_name.split('?')[0]
+        
+        pokemon_name = pokemon_name.lower().strip()
+        
         # Pokemon data with personality information
         pokemon_data = {
             'bulbasaur': {
@@ -210,10 +216,17 @@ class handler(BaseHTTPRequestHandler):
         
         if pokemon_name in pokemon_data:
             data = pokemon_data[pokemon_name]
+            self.send_response(200)
         else:
-            data = {'error': 'Pokemon not found'}
+            # Return a proper error response
+            data = {
+                'error': f'Pokemon "{pokemon_name}" not found',
+                'available_pokemon': list(pokemon_data.keys()),
+                'received_path': self.path,
+                'extracted_name': pokemon_name
+            }
+            self.send_response(404)
         
-        self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()

@@ -231,8 +231,18 @@ const PersonalityTestApp: React.FC = () => {
       setResult(testResult);
       
       // Fetch Pokemon data
-      const pokemonResponse = await axios.get(`/api/pokemon/${testResult.result_pokemon}`);
-      setPokemonData(pokemonResponse.data);
+      try {
+        const pokemonResponse = await axios.get(`/api/pokemon/${testResult.result_pokemon}`);
+        console.log('Pokemon API response:', pokemonResponse.data);
+        if (pokemonResponse.data.error) {
+          throw new Error(`Pokemon API error: ${pokemonResponse.data.error}`);
+        }
+        setPokemonData(pokemonResponse.data);
+      } catch (pokemonError) {
+        console.error('Error fetching Pokemon data:', pokemonError);
+        // Use fallback Pokemon data from the result calculation fallback logic below
+        throw pokemonError;
+      }
       
       setCurrentScreen('result');
     } catch (error) {
