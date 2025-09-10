@@ -342,10 +342,79 @@ const ResultScreen: React.FC<ResultScreenProps> = ({ result, pokemonData, onRest
     );
   }
   
+  const getEvolutionDetails = (evolutionName: string) => {
+    const evolutionData: { [key: string]: { type: string; description: string; traits: string[] } } = {
+      'vaporeon': {
+        type: 'The Empathetic Healer',
+        description: 'Choose this path if you want to develop deeper emotional intelligence and become a source of comfort for others.',
+        traits: ['Highly empathetic', 'Emotionally intelligent', 'Calming presence', 'Natural healer', 'Intuitive']
+      },
+      'jolteon': {
+        type: 'The Quick Innovator', 
+        description: 'Choose this path if you want to develop lightning-fast thinking and become an innovative problem solver.',
+        traits: ['Quick thinking', 'High energy', 'Innovative', 'Spontaneous', 'Electrically creative']
+      },
+      'flareon': {
+        type: 'The Passionate Leader',
+        description: 'Choose this path if you want to develop fierce determination and become a charismatic leader.',
+        traits: ['Passionate', 'Determined', 'Warm-hearted', 'Charismatic', 'Inspiring']
+      },
+      'espeon': {
+        type: 'The Psychic Visionary',
+        description: 'Choose this path if you want to develop intuitive wisdom and become a forward-thinking strategist.',
+        traits: ['Highly intuitive', 'Wise', 'Psychically aware', 'Future-focused', 'Serene']
+      },
+      'umbreon': {
+        type: 'The Mysterious Guardian',
+        description: 'Choose this path if you want to develop inner strength and become a protective, loyal guardian.',
+        traits: ['Mysterious', 'Loyal', 'Protective', 'Strong-willed', 'Night-focused']
+      },
+      'leafeon': {
+        type: 'The Nature Harmonizer',
+        description: 'Choose this path if you want to develop environmental awareness and become one with nature.',
+        traits: ['Nature-loving', 'Peaceful', 'Growth-oriented', 'Harmonious', 'Grounded']
+      },
+      'glaceon': {
+        type: 'The Cool Strategist',
+        description: 'Choose this path if you want to develop precise thinking and become a calculated decision-maker.',
+        traits: ['Cool-headed', 'Precise', 'Strategic', 'Calm under pressure', 'Analytical']
+      },
+      'sylveon': {
+        type: 'The Loving Connector',
+        description: 'Choose this path if you want to develop your ability to bring people together through love and understanding.',
+        traits: ['Loving', 'Connecting', 'Harmonizing', 'Gentle', 'Relationship-focused']
+      }
+    };
+
+    return evolutionData[evolutionName.toLowerCase()] || {
+      type: 'Unknown Evolution',
+      description: 'This evolution path holds mysteries yet to be discovered.',
+      traits: ['Mysterious', 'Unknown potential']
+    };
+  };
+
   const handleEvolutionClick = (evolutionName: string, pokemonName: string) => {
-    // For now, just show an alert for Eevee evolutions
+    // Show detailed evolution information for Eevee evolutions
     if (result.result_pokemon === 'eevee' && evolutionName.toLowerCase() !== 'eevee') {
-      alert(`🌟 Evolution Discovered: ${evolutionName}! This ${pokemonName} represents one of your potential growth paths.`);
+      const evolution = getEvolutionDetails(evolutionName);
+      
+      const evolutionInfo = `
+🌟 EVOLUTION DISCOVERED: ${evolutionName.toUpperCase()}
+${evolution.type}
+
+💫 EVOLUTION PATH:
+${evolution.description}
+
+✨ KEY TRAITS:
+${evolution.traits.map(trait => `• ${trait}`).join('\n')}
+
+🎯 GROWTH POTENTIAL:
+This evolution represents a potential direction for your personal development. Consider how these traits align with your goals and the person you want to become.
+
+Click "OK" to continue exploring your Eevee evolution possibilities!
+      `.trim();
+      
+      alert(evolutionInfo);
     }
   };
   
